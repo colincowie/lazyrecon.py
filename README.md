@@ -1,2 +1,5 @@
 # lazyrecon.py
-a python port of lazyrecon! 
+A python port of [lazyrecon](https://github.com/nahamsec/lazyrecon)! 
+
+
+#### ETA soon....
