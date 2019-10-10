@@ -12,14 +12,17 @@ _ETA soon...._
 6. [dirsearch](https://github.com/maurosoria/dirsearch)
 
 ### Installation
-_This project requires python3_
 
 `pip install dnspython gevent`
+
 `pip install -r requirements.txt`
 
 ### Development to do:
-- _Explore Python Replacement for current tools_
-- Core functionality
-- Automate installation
+- test / finish massdns
+- httprobe
+- aquatone
+- waybackurls
+- dirsearch
 - Report generation
 - SlackBot
+- _Explore Python Replacement for current tools_

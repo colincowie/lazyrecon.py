@@ -7,9 +7,12 @@ import requests
 
 class LazyRecon():
 
-    subdomains = []
+    # configuration varibles go here
+    massdns_path = "/home/recon/tools/massdns"
+    massdnsWordlist = "/tools/SecLists/Discovery/DNS/clean-jhaddix-dns.txt"
+    # Happy Hunting!
 
-    # configuration varibles will go here
+    subdomains = []
 
     def __init__(self):
         print('\033[0;31m'+""" _     ____  ____ ___  _ ____  _____ ____  ____  _
@@ -34,8 +37,11 @@ class LazyRecon():
         print("...")
     # NameServer records function
     def nsrecords(self):
-        # check crt.sh with massdns/scripts/ct.py
-        # Massdns
+        if os.path.exists(self.massdns_path):
+            os.system(+self.massdns_path+"/bin/massdns -r "+self.massdns_path+"lists/resolvers.txt -t A -q -o S > results/"+self.args.domain+"/mass.txt")
+            #todo: massdns subbrute
+        else:
+            print("[-] Could not find massdns directory")
         # grep for CNAMEs and NXDOMAIN
         print("...")
 
