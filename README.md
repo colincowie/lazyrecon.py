@@ -18,11 +18,11 @@ _ETA soon...._
 `pip install -r requirements.txt`
 
 ### Development to do:
-- test / finish massdns
 - httprobe
 - aquatone
 - waybackurls
 - dirsearch
 - Report generation
 - SlackBot
+- test or remove massdns
 - _Explore Python Replacement for current tools_

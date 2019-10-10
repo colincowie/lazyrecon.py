@@ -35,6 +35,7 @@ class LazyRecon():
     # To do: verify all tools are downloaded!
     def dependencies(self):
         print("...")
+
     # NameServer records function
     def nsrecords(self):
         if os.path.exists(self.massdns_path):
@@ -46,13 +47,15 @@ class LazyRecon():
         print("...")
 
     # domain discovery
-    def discovery(self):
+    def discovery(self, output):
         # probe for live host (httprobe -c 50 -t 300)
             # append results to urllist.txt
+        print("Probing for live hosts...")
+        os.system("cat "+output+" | sort -u | httprobe -c 50 -t 3000 >> ./results/"+self.args.domain+"/responsive.txt")
         # aquatone scan..
         # waybackrecon
         # dirsearcher.py intergration!
-        print("...")
+
 
     def report(self):
         print("...")
@@ -71,8 +74,8 @@ class LazyRecon():
         else:
             sub_count = 0
         print("[*] Found "+str(sub_count)+" urls")
-        self.nsrecords()
-        self.discovery()
+        #self.nsrecords()
+        self.discovery(output)
         self.report()
         # print some stats here
         print('\033[0;32m'+"Scan for "+self.args.domain+' finished \033[0m')
