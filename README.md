@@ -9,7 +9,7 @@
 
 ## Usage
 
-`./lazyrecon.sh -d target.com`
+`pythom3 lazyrecon.sh -d target.com`
 
 ## About
 
