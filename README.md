@@ -4,7 +4,7 @@ A python port of [lazyrecon](https://github.com/nahamsec/lazyrecon)!
 _ETA soon...._
 
 ### Tools Used
-1. [subdomain3](https://github.com/yanxiu0614/subdomain3)
+1. [findomain](https://github.com/Edu4rdSHL/findomain)
 2. [massdns](https://github.com/blechschmidt/massdns)
 3. [httprobe](https://github.com/tomnomnom/httprobe)
 4. [aquatone](https://github.com/michenriksen/aquatone)
