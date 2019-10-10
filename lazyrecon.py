@@ -1,4 +1,5 @@
 # lazyrecon.py - made by @th3_protoCOL, inspired by nahmsec
+import os
 import sys
 import urllib3
 import argparse
@@ -53,23 +54,17 @@ class LazyRecon():
     # Main domain scanning function!
     def scan(self):
         print('\033[0;32m'+"Recon started on domain "+self.args.domain+'\033[0m')
+        path = "results/"+self.args.domain
+        if not os.path.exists(path):
+            os.makedirs(path)
+        output = path+"/"+self.args.domain+".txt"
         print("Listing subdomains using findomain...")
-
-        # use findomain
-        print("Checking certspotter...")
-        get_subdomains = requests.get("https://api.certspotter.com/v1/issuances?domain="+self.args.domain+'&include_subdomains=true&expand=dns_names',verify = False)
-        subdomain_page = get_subdomains.text.split('"dns_names":[')
-        print('Parsing subdomains')
-        for page in subdomain_page[1:]:
-            page_list = page.split('],')[0].split(',')
-            for page2 in page_list:
-                self.subdomains.append(page2.split('"')[1])
-        print("[*] Found "+str(len(self.subdomains))+" subdomains.")
-        for domain in self.subdomains:
-            print(domain)
-
-        # check certspotter using request
-        # curl -s https://certspotter.com/api/v0/certs\?domain\=$domain | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u | grep $domain >> ./$domain/$foldername/$domain.txt
+        os.system("findomain -t "+self.args.domain+" -u "+output)
+        if os.path.exists(output):
+            sub_count = sum(1 for line in open(output))
+        else:
+            sub_count = 0
+        print("[*] Found "+str(sub_count)+" urls")
         self.nsrecords()
         self.discovery()
         self.report()
