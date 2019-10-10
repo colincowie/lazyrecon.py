@@ -18,7 +18,6 @@ _ETA soon...._
 `pip install -r requirements.txt`
 
 ### Development to do:
-- httprobe
 - aquatone
 - waybackurls
 - dirsearch

@@ -50,8 +50,11 @@ class LazyRecon():
     def discovery(self, output):
         # probe for live host (httprobe -c 50 -t 300)
             # append results to urllist.txt
-        print("Probing for live hosts...")
-        os.system("cat "+output+" | sort -u | httprobe -c 50 -t 3000 >> ./results/"+self.args.domain+"/responsive.txt")
+        print("\033[0;32m[!] Probing for live hosts...\033[0m")
+        os.system("cat "+output+" | sort -u | httprobe -p 8080 -c 50 -t 3000 > ./results/"+self.args.domain+"/responsive.txt")
+
+        responsive_count = sum(1 for line in open("./results/"+self.args.domain+"/responsive.txt"))
+        print("[*] Got "+str(responsive_count)+" responses")
         # aquatone scan..
         # waybackrecon
         # dirsearcher.py intergration!
@@ -62,7 +65,7 @@ class LazyRecon():
 
     # Main domain scanning function!
     def scan(self):
-        print('\033[0;32m'+"Recon started on domain "+self.args.domain+'\033[0m')
+        print('\033[0;32m'+"[!] Recon started on domain "+self.args.domain+'\033[0m')
         path = "results/"+self.args.domain
         if not os.path.exists(path):
             os.makedirs(path)
@@ -78,7 +81,7 @@ class LazyRecon():
         self.discovery(output)
         self.report()
         # print some stats here
-        print('\033[0;32m'+"Scan for "+self.args.domain+' finished \033[0m')
+        print('\033[0;32m'+"[+] Scan for "+self.args.domain+' finished \033[0m')
 
 
 def main():
