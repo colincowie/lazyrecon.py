@@ -7,7 +7,6 @@ import requests
 import subprocess
 import slack
 import asyncio
-from slack import WebClient
 from slack import RTMClient
 
 
@@ -17,6 +16,8 @@ class LazyRecon():
     massdns_path = "/home/recon/tools/massdns"
     massdnsWordlist = "/tools/SecLists/Discovery/DNS/clean-jhaddix-dns.txt"
     chrome_path = "/snap/bin/chromium"
+    dirsearchWordlist="dirsearch/db/dicc.txt"
+    dirsearchThreads = 50
     auquatoneThreads = 5
     # Happy Hunting!
 
@@ -31,8 +32,6 @@ class LazyRecon():
 \____/\_/ \|\____//_/   \_/\_\\\____\\\____/\____/\_/  \\|.py"""+'\033[0m')
         urllib3.disable_warnings()
         self.args = LazyRecon.parse_args()
-	# instantiate Slack client
-        self.slack_client = WebClient(os.environ.get('SLACK_BOT_TOKEN'))
         slack.RTMClient.run_on(event="message")(self.bot_listen)
         self.slack_data = {
             'token': os.environ.get('SLACK_BOT_TOKEN'),
@@ -60,18 +59,14 @@ class LazyRecon():
 
         print("\033[0;32m[!] Probing for live hosts...\033[0m")
 
-        os.system("cat "+output+" | sort -u | httprobe -p 8080 -c 50 -t 3000 >> "+all_urls_file)
+        os.system("cat "+output+" | sort -u | httprobe -p 8080 -c 50 -t 3000 | sort -u >> "+all_urls_file)
         for url in open(all_urls_file):
             self.all_urls.append(url)
 
         self.all_urls = sorted(set(self.all_urls))
-        found_urls =  ""
-        for item in self.all_urls:
-            found_urls = found_urls + item
-        print(found_urls)
         with open(all_urls_file, 'w') as f:
             for url in self.all_urls:
-                f.write("%s\n" % url)
+                f.write("%s" % url)
         print("[*] Found a total of "+str(len(self.all_urls))+" live subdomains")
         if(self.args.bot):
             self.slack_data['text'] = 'Found a total of '+str(len(self.all_urls))+' live urls'
@@ -80,14 +75,17 @@ class LazyRecon():
                 'token': os.environ.get('SLACK_BOT_TOKEN'),
                 'title': self.args.domain,
                 'channels': 'GQ3PDJRL0',
-                'content': found_urls}
+                'content': self.all_urls}
             response = requests.post(url='https://slack.com/api/files.upload',data=data)
             print(response.content)
 
         # aquatone scan..
         os.system("cat "+all_urls_file+" | aquatone -chrome-path "+self.chrome_path+" -out ./results/"+self.args.domain+"/aqua_out -threads "+str(self.auquatoneThreads)+" -silent")
         # waybackrecon
-        # dirsearcher.py intergration!
+        os.system("cat "+all_urls_file+" | waybackurls > ./results/"+self.args.domain+"/wayback.txt")
+
+        # dirsearcher.py
+        os.system("python3 dirsearch/dirsearch.py -e php,asp,aspx,jsp,html,zip,jar -w "+self.dirsearchWordlist+" -L "+all_urls_file+" -t "+str(self.dirsearchThreads)+" --random-agents  --plain-text-report ./results/"+self.args.domain+"/dirsearch.txt")
         self.slack_data['text'] = 'Recon finished'
         requests.post(url='https://slack.com/api/chat.postMessage',data=self.slack_data)
 
