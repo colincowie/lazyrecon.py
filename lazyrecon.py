@@ -5,10 +5,10 @@ import urllib3
 import argparse
 import requests
 import subprocess
-import slack
-import asyncio
-from slack import RTMClient
-
+try:
+    from slack import RTMClient
+except:
+    pass
 
 class LazyRecon():
 
@@ -32,13 +32,16 @@ class LazyRecon():
 \____/\_/ \|\____//_/   \_/\_\\\____\\\____/\____/\_/  \\|.py"""+'\033[0m')
         urllib3.disable_warnings()
         self.args = LazyRecon.parse_args()
-        slack.RTMClient.run_on(event="message")(self.bot_listen)
-        self.slack_data = {
-            'token': os.environ.get('SLACK_BOT_TOKEN'),
-            'channel': 'GQ3PDJRL0',
-            'as_user': True,
-            'text': 'default'
-}
+        try:
+           slack.RTMClient.run_on(event="message")(self.bot_listen)
+           self.slack_data = {
+                'token': os.environ.get('SLACK_BOT_TOKEN'),
+                'channel': 'GQ3PDJRL0',
+                'as_user': True,
+                'text': 'default'
+           }
+        except:
+            pass
     # Parse script arguments
     @staticmethod
     def parse_args():
@@ -86,9 +89,11 @@ class LazyRecon():
 
         # dirsearcher.py
         os.system("python3 dirsearch/dirsearch.py -e php,asp,aspx,jsp,html,zip,jar -w "+self.dirsearchWordlist+" -L "+all_urls_file+" -t "+str(self.dirsearchThreads)+" --random-agents  --plain-text-report ./results/"+self.args.domain+"/dirsearch.txt")
-        self.slack_data['text'] = 'Recon finished'
-        requests.post(url='https://slack.com/api/chat.postMessage',data=self.slack_data)
-
+        try:
+            self.slack_data['text'] = 'Recon finished'
+            requests.post(url='https://slack.com/api/chat.postMessage',data=self.slack_data)
+        except:
+            pass
 
     def report(self):
         print("...")
@@ -138,11 +143,13 @@ class LazyRecon():
 
     def slack_bot(self):
         print('\033[0;32m'+"[!] Starting slack bot!\033[0m")
-        self.slack_data['text'] = 'Ready for action!'
-        requests.post(url='https://slack.com/api/chat.postMessage',data=self.slack_data)
-        rtm_client = RTMClient(token=os.environ.get('SLACK_BOT_TOKEN'))
-        rtm_client.start()
-
+        try:
+            self.slack_data['text'] = 'Ready for action!'
+       	    requests.post(url='https://slack.com/api/chat.postMessage',data=self.slack_data)
+            rtm_client = RTMClient(token=os.environ.get('SLACK_BOT_TOKEN'))
+            rtm_client.start()
+        except:
+            pass
 def main():
     recon = LazyRecon()
     if recon.args.bot:
