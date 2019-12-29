@@ -88,7 +88,8 @@ class LazyRecon():
         os.system("cat "+all_urls_file+" | waybackurls > ./results/"+self.args.domain+"/wayback.txt")
 
         # dirsearcher.py
-        os.system("python3 dirsearch/dirsearch.py -e php,asp,aspx,jsp,html,zip,jar -w "+self.dirsearchWordlist+" -L "+all_urls_file+" -t "+str(self.dirsearchThreads)+" --random-agents  --plain-text-report ./results/"+self.args.domain+"/dirsearch.txt")
+        for url in self.all_urls:
+            os.system("python3 dirsearch/dirsearch.py -e php,asp,aspx,jsp,html,zip,jar -w "+self.dirsearchWordlist+" --url "+str(url)+" --threads "+str(self.dirsearchThreads)+" --random-agents  --plain-text-report ./results/"+str(self.args.domain)+"/dirsearch_"+str(url))
         try:
             self.slack_data['text'] = 'Recon finished'
             requests.post(url='https://slack.com/api/chat.postMessage',data=self.slack_data)
